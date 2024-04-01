@@ -7,30 +7,34 @@
 
 import SwiftUI
 import AVKit
+import MarkdownKit
 
 struct VideoView: View {
+    @ObservedObject var viewModel = VideoViewModel()
+
     @State private var player = AVPlayer()
-    @State private var videoModel: Video?
-    
+
     var body: some View {
         NavigationStack{
             VStack{
                 VideoPlayer(player: player)
-//                    .ignoresSafeArea(.all)
-//                    .navigationBarBackButtonHidden()
-                    .onAppear{
-                        guard let url = URL(string: "https://embed-ssl.wistia.com/deliveries/cc8402e8c16cc8f36d3f63bd29eb82f99f4b5f88/accudvh5jy.mp4") else {
-                            return
-                        }
-                        player = AVPlayer(url: url)
-                        player.play()
+                    .onReceive(viewModel.$videos, perform: { _ in
+                    guard let viewModelVideos = self.viewModel.videos, let url = URL(string: viewModelVideos[self.viewModel.selectedIndex ?? 0].fullURL ?? "") else {
+                        return
                     }
-                    .onDisappear{
-                        player.pause()
-                    }
+                    player = AVPlayer(url: url)
+                    player.play()
+                })
                 ScrollView(content: {
-                    Text("While the Stack Exchange API offers the convenience of configuring and running API calls directly within its endpoint documentation pages, not all APIs provide such a feature.\n\nYou may sometimes load an API endpoint URL in your web browser to view its result, but this approach doesn’t work for authenticated HTTP requests or those with specific headers or a request body.\n\nFor a more versatile solution, you can run your Swift code in a playground to observe how an API responds to a request. Additionally, you have a couple of other options:\nThe first one is the cURL command line tool. Some API documentations provide sample cURL commands that you can copy and paste into your terminal.\n\n\nWhile the Stack Exchange API offers the convenience of configuring and running API calls directly within its endpoint documentation pages, not all APIs provide such a feature.\n\nYou may sometimes load an API endpoint URL in your web browser to view its result, but this approach doesn’t work for authenticated HTTP requests or those with specific headers or a request body.\n\nFor a more versatile solution, you can run your Swift code in a playground to observe how an API responds to a request. Additionally, you have a couple of other options:\nThe first one is the cURL command line tool. Some API documentations provide sample cURL commands that you can copy and paste into your terminal.")
-                        .padding()
+                    Text(self.viewModel.videos?[self.viewModel.selectedIndex ?? 0].title ?? "")
+                        .bold()
+                        .multilineTextAlignment(.leading)
+                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 0, trailing: 10))
+                    Text("by  \(self.viewModel.videos?[self.viewModel.selectedIndex ?? 0].author?.name ?? "")")
+                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                        .multilineTextAlignment(.leading)
+                    let descString = AttributedString(MarkdownParser().parse(self.viewModel.videos?[self.viewModel.selectedIndex ?? 0].description ?? ""))
+                    Text(descString).padding()
                 })
             }
             .navigationTitle("Video Player")
@@ -39,6 +43,13 @@ struct VideoView: View {
             .toolbarColorScheme(.dark)
             .toolbar(.visible, for: .navigationBar)
         }
+        .task {
+            await viewModel.getVideos()
+            self.viewModel.selectedIndex = 0
+        }
+        .onDisappear(perform: {
+            player.pause()
+        })
     }
 }
 

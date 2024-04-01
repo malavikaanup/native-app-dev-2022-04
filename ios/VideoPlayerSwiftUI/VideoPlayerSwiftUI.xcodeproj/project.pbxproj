@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,6 +16,9 @@
 		BE9898422BB64DD1001A5762 /* VideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9898412BB64DD1001A5762 /* VideoModel.swift */; };
 		BE9898442BB64E03001A5762 /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9898432BB64E03001A5762 /* VideoViewModel.swift */; };
 		BE9898462BB64E19001A5762 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9898452BB64E19001A5762 /* VideoView.swift */; };
+		BE98989F2BBB3791001A5762 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE98989D2BBB3791001A5762 /* NetworkManager.swift */; };
+		BE9898A02BBB3791001A5762 /* ErrorCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE98989E2BBB3791001A5762 /* ErrorCases.swift */; };
+		BE9898A32BBB4518001A5762 /* MarkdownKit in Frameworks */ = {isa = PBXBuildFile; productRef = BE9898A22BBB4518001A5762 /* MarkdownKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,8 @@
 		BE9898412BB64DD1001A5762 /* VideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModel.swift; sourceTree = "<group>"; };
 		BE9898432BB64E03001A5762 /* VideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewModel.swift; sourceTree = "<group>"; };
 		BE9898452BB64E19001A5762 /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
+		BE98989D2BBB3791001A5762 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		BE98989E2BBB3791001A5762 /* ErrorCases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCases.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE9898A32BBB4518001A5762 /* MarkdownKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +107,7 @@
 		3AF67A5A25A64DBD00D360A7 /* VideoPlayerSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				BE98989C2BBB3791001A5762 /* WebServices */,
 				BE9898402BB64DBE001A5762 /* Videos */,
 				3AF67A5B25A64DBD00D360A7 /* VideoPlayerSwiftUIApp.swift */,
 				3AF67A5D25A64DBD00D360A7 /* ContentView.swift */,
@@ -147,6 +154,15 @@
 			path = Videos;
 			sourceTree = "<group>";
 		};
+		BE98989C2BBB3791001A5762 /* WebServices */ = {
+			isa = PBXGroup;
+			children = (
+				BE98989D2BBB3791001A5762 /* NetworkManager.swift */,
+				BE98989E2BBB3791001A5762 /* ErrorCases.swift */,
+			);
+			path = WebServices;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -163,6 +179,9 @@
 			dependencies = (
 			);
 			name = VideoPlayerSwiftUI;
+			packageProductDependencies = (
+				BE9898A22BBB4518001A5762 /* MarkdownKit */,
+			);
 			productName = VideoPlayerSwiftUI;
 			productReference = 3AF67A5825A64DBD00D360A7 /* VideoPlayerSwiftUI.app */;
 			productType = "com.apple.product-type.application";
@@ -234,6 +253,9 @@
 				Base,
 			);
 			mainGroup = 3AF67A4F25A64DBD00D360A7;
+			packageReferences = (
+				BE9898A12BBB4518001A5762 /* XCRemoteSwiftPackageReference "MarkdownKit" */,
+			);
 			productRefGroup = 3AF67A5925A64DBD00D360A7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -276,6 +298,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE98989F2BBB3791001A5762 /* NetworkManager.swift in Sources */,
+				BE9898A02BBB3791001A5762 /* ErrorCases.swift in Sources */,
 				3AF67A5E25A64DBD00D360A7 /* ContentView.swift in Sources */,
 				BE9898462BB64E19001A5762 /* VideoView.swift in Sources */,
 				BE9898422BB64DD1001A5762 /* VideoModel.swift in Sources */,
@@ -594,6 +618,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BE9898A12BBB4518001A5762 /* XCRemoteSwiftPackageReference "MarkdownKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bmoliveira/MarkdownKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BE9898A22BBB4518001A5762 /* MarkdownKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE9898A12BBB4518001A5762 /* XCRemoteSwiftPackageReference "MarkdownKit" */;
+			productName = MarkdownKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3AF67A5025A64DBD00D360A7 /* Project object */;
 }
