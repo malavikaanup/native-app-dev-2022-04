@@ -10,32 +10,93 @@ import AVKit
 import MarkdownKit
 
 struct VideoView: View {
-    @ObservedObject var viewModel = VideoViewModel()
-
-    @State private var player = AVPlayer()
+    @StateObject var viewModel = VideoViewModel()
+    @State var selectedIndex: Int = 0
+    @StateObject var player = PlayerViewModel()
 
     var body: some View {
         NavigationStack{
             VStack{
-                VideoPlayer(player: player)
-                    .onReceive(viewModel.$videos, perform: { _ in
-                    guard let viewModelVideos = self.viewModel.videos, let url = URL(string: viewModelVideos[self.viewModel.selectedIndex ?? 0].fullURL ?? "") else {
-                        return
-                    }
-                    player = AVPlayer(url: url)
-                    player.play()
-                })
-                ScrollView(content: {
-                    Text(self.viewModel.videos?[self.viewModel.selectedIndex ?? 0].title ?? "")
+                if viewModel.videos.isEmpty {
+                    Text("Loading...")
+                        .font(.largeTitle)
+                        .padding()
                         .bold()
-                        .multilineTextAlignment(.leading)
-                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 0, trailing: 10))
-                    Text("by  \(self.viewModel.videos?[self.viewModel.selectedIndex ?? 0].author?.name ?? "")")
-                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                        .multilineTextAlignment(.leading)
-                    let descString = AttributedString(MarkdownParser().parse(self.viewModel.videos?[self.viewModel.selectedIndex ?? 0].description ?? ""))
-                    Text(descString).padding()
-                })
+                } else {
+                    ZStack(content: {
+                        VideoPlayer(player: self.player.player)
+                        HStack {
+                            //Previous Button
+                            Button {
+                                selectedIndex = selectedIndex-1
+                                player.loadVideo(fromURL: viewModel.videos[selectedIndex].fullURL ?? "")
+                            } label: {
+                                if selectedIndex == 0 {
+                                    Image("previous", bundle: nil)
+                                        .font(.largeTitle)
+                                        .frame(width:80, height: 80)
+                                        .opacity(0.5)
+                                } else {
+                                    Image("previous", bundle: nil)
+                                        .font(.largeTitle)
+                                        .frame(width:80, height: 80)
+                                }
+                            }
+                            .padding()
+                            .disabled(selectedIndex == 0)
+                            
+                            //Play-Pause Button
+                            if self.player.isPlaying {
+                                Button {
+                                    self.player.pauseVideo()
+                                } label: {
+                                    Image("pause", bundle: nil)
+                                        .font(.largeTitle)
+                                        .frame(width:80, height: 80)
+                                }
+                            } else {
+                                Button {
+                                    self.player.playVideo()
+                                } label: {
+                                    Image("play", bundle: nil)
+                                        .font(.largeTitle)
+                                        .frame(width:80, height: 80)
+                                }
+                            }
+
+                            //Next Button
+                            Button {
+                                selectedIndex = selectedIndex+1
+                                player.loadVideo(fromURL: viewModel.videos[selectedIndex].fullURL ?? "")
+                            } label: {
+                                if selectedIndex >= viewModel.videos.count-1 {
+                                    Image("next", bundle: nil)
+                                        .font(.largeTitle)
+                                        .frame(width:80, height: 80)
+                                        .opacity(0.5)
+                                } else {
+                                    Image("next", bundle: nil)
+                                        .font(.largeTitle)
+                                        .frame(width:80, height: 80)
+                                }
+                            }
+                            .padding()
+                            .disabled(selectedIndex >= viewModel.videos.count-1)
+                        }
+                    })
+                    //Title and Description
+                    ScrollView(content: {
+                        Text(self.viewModel.videos[selectedIndex].title ?? "")
+                            .bold()
+                            .multilineTextAlignment(.leading)
+                            .padding(EdgeInsets(top: 5, leading: 10, bottom: 0, trailing: 10))
+                        Text("by  \(self.viewModel.videos[selectedIndex].author?.name ?? "")")
+                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                            .multilineTextAlignment(.leading)
+                        let descString = AttributedString(MarkdownParser().parse(self.viewModel.videos[selectedIndex].description ?? ""))
+                        Text(descString).padding()
+                    })
+                }
             }
             .navigationTitle("Video Player")
             .navigationBarTitleDisplayMode(.large)
@@ -45,11 +106,9 @@ struct VideoView: View {
         }
         .task {
             await viewModel.getVideos()
-            self.viewModel.selectedIndex = 0
+            player.loadVideo(fromURL: viewModel.videos[selectedIndex].fullURL ?? "")
+            selectedIndex = 0
         }
-        .onDisappear(perform: {
-            player.pause()
-        })
     }
 }
 
